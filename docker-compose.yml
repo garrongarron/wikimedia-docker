@@ -1,0 +1,30 @@
+version: '3'
+services:
+  mediawiki:
+    image: mediawiki
+    restart: always
+    ports:
+      - 8080:80
+    links:
+      - database
+    volumes:
+      - /var/www/html/images
+      # - ./wiki/:/var/www/html/
+      # After initial setup, download LocalSettings.php to the same directory as
+      # this yaml and uncomment the following line and use compose to restart
+      # the mediawiki service
+      - ./LocalSettings.php:/var/www/html/LocalSettings.php
+      - ./pygments.generated.css:/var/www/html/extensions/SyntaxHighlight_GeSHi/modules/pygments.generated.css
+      - ./pygments.wrapper.css:/var/www/html/extensions/SyntaxHighlight_GeSHi/modules/pygments.wrapper.css
+      - ./wiki.png:/var/www/html/resources/assets/wiki.png
+  database:
+    image: mariadb
+    restart: always
+    environment:
+      # @see https://phabricator.wikimedia.org/source/mediawiki/browse/master/includes/DefaultSettings.php
+      MYSQL_DATABASE: my_wiki
+      MYSQL_USER: wikiuser
+      MYSQL_PASSWORD: example
+      MYSQL_RANDOM_ROOT_PASSWORD: 'yes'
+
+      # https://jwarby.github.io/jekyll-pygments-themes/languages/javascript.html
